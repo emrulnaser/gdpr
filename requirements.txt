@@ -43,3 +43,4 @@ wrapt==1.17.2
 scikit-learn>=1.2.2
 PyPDF2==3.0.1
 WeasyPrint==66.0
+gunicorn
