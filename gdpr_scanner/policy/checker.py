@@ -1,5 +1,4 @@
 import re
-from .articles import articles
 from .scoring import calculate_score_and_risk, calculate_total_compliance_score
 
 KEY_ISSUES = {
@@ -20,8 +19,39 @@ KEY_ISSUES = {
 }
 
 class GDPRComplianceChecker:
-    def __init__(self):
-        self.articles = articles
+    def __init__(self, language='en'):
+        self.articles = self._get_articles_by_language(language)
+
+    def _get_articles_by_language(self, language='en'):
+        if language == 'nl':
+            from .articles.keywords_nl import KEYWORDS_NL as keywords_nl
+            from .articles.titles_nl import titles as titles_nl
+            from .articles.texts_nl import texts_nl
+            from .articles.recitals_nl import recitals as recitals_nl
+
+            keywords = {key.replace('Artikel', 'Article'): value for key, value in keywords_nl.items()}
+            titles = {key.replace('Artikel', 'Article'): value for key, value in titles_nl.items()}
+            texts = {key.replace('Artikel', 'Article'): value for key, value in texts_nl.items()}
+            recitals = {key.replace('Artikel', 'Article'): value for key, value in recitals_nl.items()}
+
+        else:
+            from .articles.keywords import keywords
+            from .articles.titles import titles
+            from .articles.texts import texts
+            from .articles.recitals import recitals
+
+        
+        articles = {}
+        all_article_keys = set(keywords.keys()) | set(titles.keys()) | set(texts.keys()) | set(recitals.keys())
+
+        for key in all_article_keys:
+            articles[key] = {
+                "keywords": keywords.get(key, []),
+                "title": titles.get(key, ""),
+                "text": texts.get(key, ""),
+                "recitals": recitals.get(key, [])
+            }
+        return articles
 
     def _prepare_keywords_for_regex(self, keywords):
         patterns = []
@@ -69,7 +99,7 @@ class GDPRComplianceChecker:
 
         return len(matched_terms), list(matched_terms)
 
-    def check_compliance(self, text):
+    def check_compliance(self, text, t):
         results = {}
         key_issues_result = []
         compliant_articles_count, partially_compliant_articles_count, non_compliant_articles_count = 0, 0, 0
@@ -89,11 +119,11 @@ class GDPRComplianceChecker:
                 
                 # Simplified scoring logic based on keyword counts, as requested.
                 if matched_count >= 3:
-                    status, status_flag, match_percent = "✅ Strongly Aligned", "compliant", 100
+                    status, status_flag, match_percent = f"✅ {t['status_aligned']}", "compliant", 100
                 elif matched_count == 2:
-                    status, status_flag, match_percent = "⚠ Partially Aligned", "partial", 50
+                    status, status_flag, match_percent = f"⚠ {t['status_partially']}", "partial", 50
                 else: # Covers 0 or 1 match
-                    status, status_flag, match_percent = "❌ Needs Review", "non-compliant", 15 if matched_count == 1 else 0
+                    status, status_flag, match_percent = f"❌ {t['status_review']}", "non-compliant", 15 if matched_count == 1 else 0
             
             # Update counts for overall summary
             if status_flag == "compliant":
@@ -146,7 +176,7 @@ class GDPRComplianceChecker:
         key_issue_compliance_score = round((key_issue_score_total / key_issue_total) * 100)
 
         # 🔎 Use risk level and summary as before
-        key_issue_score, risk_level, issue_summary = calculate_score_and_risk(key_issues_result)
+        key_issue_score, risk_level, issue_summary = calculate_score_and_risk(key_issues_result, t)
 
         overall_article_score = key_issue_score
 

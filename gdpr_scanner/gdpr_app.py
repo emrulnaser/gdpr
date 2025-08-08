@@ -40,11 +40,15 @@ def read_uploaded_file(filepath):
 def main_page():
     return render_template('Main_page.html')
 
+from .translations import translations
+
 @gdpr_bp.route('/scan', methods=['GET', 'POST'])
 def scan():
     error = None
     results = {"summary_text": "", "total_score": 0, "key_issues": [], "full_report": {}}
     scanned_text = None
+    language = request.form.get('selected_language', 'en')
+    t = translations.get(language, translations['en'])
 
     if request.method == 'POST':
         input_text = request.form.get('text', '').strip()
@@ -63,9 +67,9 @@ def scan():
         if not combined_text or combined_text.strip() == "":
             error = "Please provide some text or upload a valid file."
         else:
-            checker = GDPRComplianceChecker()
-            scan_results = checker.check_compliance(combined_text)
-            results = run_short_scan(scan_results)
+            checker = GDPRComplianceChecker(language=language)
+            scan_results = checker.check_compliance(combined_text, t)
+            results = run_short_scan(scan_results, t)
             scanned_text = combined_text
 
     return render_template(
@@ -75,8 +79,12 @@ def scan():
         scanned_text=scanned_text,
         summary_text=results.get('summary_text', ''),
         total_score=results.get('total_score', 0),
-        key_issues=results.get('key_issues', [])
+        key_issues=results.get('key_issues', []),
+        t=t
     )
+
+
+from .translations import translations
 
 @gdpr_bp.route('/full_report', methods=['GET', 'POST'])
 def full_report():
@@ -85,6 +93,9 @@ def full_report():
 
     error = None
     scanned_text = None
+    language = request.form.get('selected_language', 'en')
+    t = translations.get(language, translations['en'])
+
     overall_report = {
         "results": {},
         "key_issues": "",
@@ -113,7 +124,8 @@ def full_report():
     if not combined_text:
         error = "Please provide some text or upload a valid file."
     else:
-        overall_report = run_full_scan(combined_text)
+        checker = GDPRComplianceChecker(language=language)
+        overall_report = run_full_scan(combined_text, checker, t)
         scanned_text = combined_text
 
     return render_template(
@@ -128,8 +140,10 @@ def full_report():
         total_compliance_score=overall_report.get('total_compliance_score', 'N/A'),
         compliant_articles=overall_report.get('compliant_articles', []),
         partial_articles=overall_report.get('partial_articles', []),
-        non_compliant_articles=overall_report.get('non_compliant_articles', [])
+        non_compliant_articles=overall_report.get('non_compliant_articles', []),
+        t=t
     )
+
 
 @gdpr_bp.route('/full_report_input')
 def full_report_input():
@@ -139,9 +153,12 @@ def full_report_input():
 def download_pdf():
     # Retrieve the data needed for the report from the form
     scanned_text = request.form.get('scanned_text', '')
+    language = request.form.get('selected_language', 'en')
+    t = translations.get(language, translations['en'])
     
     # Regenerate the report data
-    overall_report = run_full_scan(scanned_text)
+    checker = GDPRComplianceChecker(language=language)
+    overall_report = run_full_scan(scanned_text, checker, t)
     results = overall_report.get("results", {})
 
     # Render the HTML template with the data
@@ -156,7 +173,8 @@ def download_pdf():
         total_compliance_score=overall_report.get('total_compliance_score', 'N/A'),
         compliant_articles=overall_report.get('compliant_articles', []),
         partial_articles=overall_report.get('partial_articles', []),
-        non_compliant_articles=overall_report.get('non_compliant_articles', [])
+        non_compliant_articles=overall_report.get('non_compliant_articles', []),
+        t=t
     )
 
     # Generate PDF from the rendered HTML

@@ -265,23 +265,23 @@
 
 <div class="watermark">eSecurity for Safe Privacy & Transparency</div>
 <div class="container">
-    <h1>🛡 GDPR Full Compliance Report</h1>
+    <h1>🛡 {{ t.full_report_title }}</h1>
 
     <div class="summary-box">
-        <h2>📌 Compliance Summary</h2>
-        <p><strong>Key Issue Risk:</strong></p>        <ul>            {% for issue in key_issues.split('\n') %}                <li class="{% if '✅' in issue %}status-ok{% elif '⚠' in issue %}status-warning{% elif '❌' in issue %}status-risk{% endif %}">{{ issue }}</li>            {% endfor %}        </ul>
-        <p><strong>Overall Compliance Score:</strong> <span class="score">{{ score }}%</span></p>
+        <h2>📌 {{ t.compliance_summary }}</h2>
+        <p><strong>{{ t.key_issue_risk }}</strong></p>        <ul>            {% for issue in key_issues.split('\n') %}                <li class="{% if '✅' in issue %}status-ok{% elif '⚠' in issue %}status-warning{% elif '❌' in issue %}status-risk{% endif %}">{{ issue }}</li>            {% endfor %}        </ul>
+        <p><strong>{{ t.overall_compliance_score }}</strong> <span class="score">{{ score }}%</span></p>
         
-        <p><strong>Risk Level:</strong> {{ risk_level }}</p>
-        <p><strong>Summary Notes:</strong> {{ summary }}</p>
+        <p><strong>{{ t.risk_level }}</strong> {{ risk_level }}</p>
+        <p><strong>{{ t.summary_notes }}</strong> {{ summary }}</p>
     </div>
 
-    <h2>📄 Article-by-Article Analysis</h2>
+    <h2>📄 {{ t.article_analysis }}</h2>
 
     <div class="article-summary-visual">
         {% if compliant_articles %}
         <div class="summary-block compliant-block">
-            <h3>✅ Strongly Aligned Articles</h3>
+            <h3>✅ {{ t.strongly_aligned }}</h3>
             <p>{% for article in compliant_articles %}
                 <span class="article-badge compliant-badge">{{ article }}</span>
             {% endfor %}</p>
@@ -290,14 +290,14 @@
 
         {% if partial_articles %}
         <div class="summary-block partial-block">
-            <h3>⚠ Partially Aligned Articles</h3>
+            <h3>⚠ {{ t.partially_aligned }}</h3>
             <p>{% for article in partial_articles %}
                 <span class="article-badge partial-badge">{{ article }}</span>
             {% endfor %}</p>
         </div>
         {% endif %}
         <div class="summary-block total-score-block">
-            <h3>📊 Total Alignment Score</h3>
+            <h3>📊 {{ t.total_alignment_score }}</h3>
             <p><span class="score">{{ total_compliance_score }}%</span></p>
         </div>
     </div>
@@ -306,19 +306,19 @@
     <table>
         <thead>
             <tr>
-                <th>GDPR Article</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Match %</th>
-                <th>Matched Keywords</th>
-                <th>Recitals</th>
+                <th>{{ t.gdpr_article }}</th>
+                <th>{{ t.title }}</th>
+                <th>{{ t.status }}</th>
+                <th>{{ t.match_percent }}</th>
+                <th>{{ t.matched_keywords }}</th>
+                <th>{{ t.recitals }}</th>
             </tr>
         </thead>
         <tbody>
             {% for article, details in results.items() %}
             {% if 'status' in details %}
             <tr>
-                <td>Article {{ article }}</td>
+                <td>{{ article }}</td>
                 <td>{{ details.title }}</td>
                 <td class="
                     {% if details.status.startswith('✅') %}status-ok{% elif details.status.startswith('⚠') %}status-warning{% else %}status-risk{% endif %}
@@ -339,19 +339,20 @@
 
     <form action="{{ url_for('gdpr.download_pdf') }}" method="post" style="display:inline;">
         <input type="hidden" name="scanned_text" value="{{ scanned_text|default('') }}">
-        <button type="submit" class="download-btn">⬇ Download Report</button>
+        <input type="hidden" name="language" value="{{ t.language }}">
+        <button type="submit" class="download-btn">⬇ {{ t.download_report }}</button>
     </form>
 
     {% if scanned_text %}
     <div class="scanned-text-display">
-        <h2>Original Scanned Content</h2>
+        <h2>{{ t.scanned_content }}</h2>
         <pre>{{ scanned_text }}</pre>
     </div>
     {% endif %}
     <div class="footer" style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #777; font-size: 0.9em;">
-        <p>Visit us at: <a href="https://esecurity.ovh">esecurity.ovh</a></p>
-        <p>Email: <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
-        <p>GDPR Compliance Scanner &copy; 2025 | Protecting Privacy Rights</p>
+        <p>{{ t.visit_us }} <a href="https://esecurity.ovh">esecurity.ovh</a></p>
+        <p>{{ t.email }} <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
+        <p>{{ t.footer_text }}</p>
     </div>
 </div>
 </body>

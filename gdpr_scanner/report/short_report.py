@@ -1,6 +1,6 @@
 # policy/short_report.py
 
-def run_short_scan(scan_results):
+def run_short_scan(scan_results, t):
     """
     Generate summary text, total compliance score, and list of key non-compliant issues
     from the full scan results, focusing only on specific articles.
@@ -81,13 +81,14 @@ def run_short_scan(scan_results):
 
             # Add all filtered articles to new_key_issues_list with their status
             if article_id in FILTERED_KEY_ISSUES_MAP:
-                issue_name = FILTERED_KEY_ISSUES_MAP[article_id]
+                issue_name_key = FILTERED_KEY_ISSUES_MAP[article_id]
+                issue_name = t['key_issues'].get(issue_name_key, issue_name_key) # Get translated key issue name
                 
                 # Determine the CSS class for coloring
                 status_class = 'ok' if status_flag == 'compliant' else ('warning' if status_flag == 'partial' else 'risk')
                 
                 # Determine the text to display for the status
-                display_status_text = 'Strongly Aligned' if status_flag == 'compliant' else ('Partially Aligned' if status_flag == 'partial' else 'Needs Review')
+                display_status_text = t['status_aligned'] if status_flag == 'compliant' else (t['status_partially'] if status_flag == 'partial' else t['status_review'])
                 
                 new_key_issues_list.append(
                     f"{issue_name} ({article_id}): <span class=\"status-{status_class}\">{emoji_map.get(status_flag, '')} {display_status_text}</span>"
@@ -103,15 +104,16 @@ def run_short_scan(scan_results):
     summary_notes = scan_results.get("Overall Compliance Summary", {}).get("📌 Summary Notes", "No specific summary notes.")
 
     summary_text = (
-        f"GDPR Compliance Score: {new_total_compliance_score}%\n"
-        f"Non-Compliant Articles: {non_compliant_articles_count}\n"
-        f"Risk Level: {risk_level}\n"
-        f"Summary Notes: {summary_notes}"
+        f"{t['overall_compliance_score']} {new_total_compliance_score}%\n"
+        f"{t['non_compliant_articles']}: {non_compliant_articles_count}\n"
+        f"{t['risk_level']}: {risk_level}\n"
+        f"{t['summary_notes']}: {summary_notes}"
     )
 
     return {
         "summary_text": summary_text,
         "total_score": new_total_compliance_score, # Use the new calculated score
         "key_issues": new_key_issues_list, # Use the new filtered key issues
-        "full_report": filtered_scan_results # Pass the filtered report for detailed display
+        "full_report": filtered_scan_results, # Pass the filtered report for detailed display
+        "non_compliant_articles": non_compliant_articles_count # Add this line
     }

@@ -90,8 +90,28 @@
 
     <br>
 
+    <label for="language">Select Language:</label>
+    <select name="language" id="language" onchange="updateHiddenLanguage()">
+      <option value="en">English</option>
+      <option value="nl">Dutch</option>
+    </select>
+    
+    <input type="hidden" name="selected_language" id="selected_language" value="en">
+
+    <br>
+
     <button type="submit" class="scan-btn">Scan for Compliance</button>
   </form>
+
+  <script>
+    function updateHiddenLanguage() {
+      var languageSelect = document.getElementById('language');
+      var selectedLanguageInput = document.getElementById('selected_language');
+      selectedLanguageInput.value = languageSelect.value;
+    }
+    // Set initial value on page load
+    window.onload = updateHiddenLanguage;
+  </script>
 
   <div class="footer-text">
     GDPR Compliance Scanner © 2025 | Protecting Privacy Rights

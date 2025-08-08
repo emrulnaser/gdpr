@@ -1,10 +1,10 @@
-def calculate_score_and_risk(key_issues):
+def calculate_score_and_risk(key_issues, t):
     if not key_issues or not isinstance(key_issues, list):
-        return 0, "Critical", "❌ No key issue data provided. Cannot assess compliance effectively."
+        return 0, t['risk_critical'], f"❌ {t['summary_no_data']}"
 
     total_key_issues = len(key_issues)
     if total_key_issues == 0:
-        return 100, "Low", "✅ No specific key issues identified for assessment (implies full coverage or no relevant content)."
+        return 100, t['risk_low'], f"✅ {t['summary_no_issues']}"
 
     score_accumulator = 0
     critical_issues = {
@@ -41,29 +41,29 @@ def calculate_score_and_risk(key_issues):
 
     # Determine risk level and summary
     if final_score >= 90:
-        risk = "Very Low"
-        summary = "✅ Excellent GDPR alignment. Your policy appears highly compliant with key principles."
+        risk = t['risk_very_low']
+        summary = f"✅ {t['summary_excellent']}"
     elif final_score >= 75:
-        risk = "Low"
-        summary = "👍 Strong GDPR compliance. Minor adjustments may be beneficial."
+        risk = t['risk_low']
+        summary = f"👍 {t['summary_strong']}"
     elif final_score >= 50:
-        risk = "Medium"
-        summary = "⚠️ Moderate GDPR compliance. Several key areas require review and potential enhancement."
+        risk = t['risk_medium']
+        summary = f"⚠️ {t['summary_moderate']}"
     elif final_score >= 25:
-        risk = "High"
-        summary = "❌ Significant GDPR compliance gaps. Urgent review and substantial changes are recommended."
+        risk = t['risk_high']
+        summary = f"❌ {t['summary_significant']}"
     else:
-        risk = "Critical"
-        summary = "🚨 Critical GDPR compliance issues detected. Immediate action is required to avoid severe penalties."
+        risk = t['risk_critical']
+        summary = f"🚨 {t['summary_critical']}"
 
     # Escalate risk if critical issues are missed
     if critical_non_compliant_count > 0:
-        if risk in ["Very Low", "Low"]:
-            risk = "Medium to High"
-            summary += "\n❗ Critical GDPR principles are not adequately addressed despite overall score."
-        elif risk == "Medium":
-            risk = "High"
-            summary += "\n❗ Critical GDPR principles are not adequately addressed, increasing overall risk."
+        if risk in [t['risk_very_low'], t['risk_low']]:
+            risk = f"{t['risk_medium']} to {t['risk_high']}"
+            summary += f"\n❗ {t['summary_critical_missed']}"
+        elif risk == t['risk_medium']:
+            risk = t['risk_high']
+            summary += f"\n❗ {t['summary_critical_missed_escalated']}"
 
     return final_score, risk, summary
 

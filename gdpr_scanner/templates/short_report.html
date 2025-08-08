@@ -268,7 +268,7 @@
     <div class="watermark">eSecurity for Safe Privacy & Transparency</div>
     <div class="container">
         <header>
-            <h1><i class="fas fa-shield-alt"></i> GDPR Compliance Scanner</h1>
+            <h1><i class="fas fa-shield-alt"></i> {{ t.full_report_title }}</h1>
             <p>Upload your privacy policy document or paste text to check GDPR compliance requirements</p>
         </header>
 
@@ -290,25 +290,44 @@
                 </div>
                 {% endif %}
 
-                <button type="submit"><i class="fas fa-search"></i> Scan for Compliance</button>
+                <div class="form-group">
+                    <label for="language">Select Language:</label>
+                    <select name="selected_language" id="language" onchange="updateHiddenLanguage()">
+                      <option value="en">English</option>
+                      <option value="nl">Dutch</option>
+                    </select>
+                </div>
+                <input type="hidden" name="selected_language" id="selected_language_hidden" value="en">
+
+                <button type="submit"><i class="fas fa-search"></i> {{ t.scan_for_compliance }}</button>
             </form>
         </section>
+
+        <script>
+            function updateHiddenLanguage() {
+              var languageSelect = document.getElementById('language');
+              var selectedLanguageInput = document.getElementById('selected_language_hidden');
+              selectedLanguageInput.value = languageSelect.value;
+            }
+            // Set initial value on page load
+            window.onload = updateHiddenLanguage;
+          </script>
 
         {% if results %}
         <section class="results-section">
             <div class="results-header">
-                <h2><i class="fas fa-clipboard-list"></i> Compliance Results</h2>
+                <h2><i class="fas fa-clipboard-list"></i> {{ t.compliance_results }}</h2>
             </div>
 
             <div class="score-card">
-                <h3>Total Compliance Percentage</h3>
+                <h3>{{ t.total_compliance_percentage }}</h3>
                 <div class="score-value">{{ total_score }}%</div>
                 <p>{{ summary_text }}</p>
             </div>
 
             {% if key_issues %}
             <div class="error">
-                <h3>Compliance Status of Key Articles:</h3>
+                <h3>{{ t.key_articles_status }}</h3>
                 <ul>
                     {% for issue in key_issues %}
                     <li>{{ issue | safe }}</li>
@@ -322,11 +341,11 @@
                     {% if 'status' in data %} {# Ensure it's an article, not the overall summary #}
                     <div class="compliance-item {% if '✅' in data.status %}compliant{% else %}non-compliant{% endif %}">
                         <h3>{{ article_id }} - {{ data.title }}</h3>
-                        <p><strong>Status:</strong> {{ data.status }}</p>
-                        <p><strong>Matched Keywords:</strong> {{ data.found_terms | join(', ') }}</p>
-                        <p><strong>Match Percentage:</strong> {{ data.match_percentage }}</p>
-                        <p><strong>Summary:</strong> {{ data.summary }}</p>
-                        <p><strong>Related Recitals:</strong></p>
+                        <p><strong>{{ t.status }}:</strong> {{ data.status }}</p>
+                        <p><strong>{{ t.matched_keywords }}:</strong> {{ data.found_terms | join(', ') }}</p>
+                        <p><strong>{{ t.match_percentage }}:</strong> {{ data.match_percentage }}</p>
+                        <p><strong>{{ t.summary }}:</strong> {{ data.summary }}</p>
+                        <p><strong>{{ t.related_recitals }}:</strong></p>
                         <ul>
                             {% for recital in data.recitals %}
                             <li>{{ recital }}</li>
@@ -339,7 +358,7 @@
 
             {% if scanned_text %}
             <div class="preview-section">
-                <h3><i class="fas fa-file-alt"></i> Scanned Content Preview</h3>
+                <h3><i class="fas fa-file-alt"></i> {{ t.scanned_content_preview }}</h3>
                 <div class="preview-content">{{ scanned_text }}</div>
             </div>
             {% endif %}
@@ -347,9 +366,9 @@
         {% endif %}
 
         <footer>
-            <p>Visit us at: <a href="https://esecurity.ovh">esecurity.ovh</a></p>
-            <p>Email: <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
-            <p>GDPR Compliance Scanner &copy; 2025 | Protecting Privacy Rights</p>
+            <p>{{ t.visit_us }} <a href="https://esecurity.ovh">esecurity.ovh</a></p>
+            <p>{{ t.email }} <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
+            <p>{{ t.footer_text }}</p>
         </footer>
     </div>
 </body>
