@@ -51,3 +51,5 @@ webdriver-manager
 beautifulsoup4==4.12.3
 lxml==5.2.2
 chromedriver-autoinstaller
+selenium==4.23.1
+undetected-chromedriver==3.5.4
