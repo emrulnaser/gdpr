@@ -9,7 +9,7 @@ def extract_cookies_from_url(url):
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")  # Useful for some Linux envs
-    options.binary_location = "/usr/bin/google-chrome"
+    options.binary_location = "/usr/bin/chromium-browser"
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
