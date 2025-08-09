@@ -50,3 +50,4 @@ selenium
 webdriver-manager
 beautifulsoup4==4.12.3
 lxml==5.2.2
+chromedriver-autoinstaller
