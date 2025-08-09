@@ -12,17 +12,16 @@ def extract_cookies_from_url(url):
 
     try:
         # If Chromium is NOT available, use requests fallback
-        if shutil.which("chromium-browser") is None:
-            resp = requests.get(url, timeout=10, verify=False)  # verify=False fixes SSL issue on Render
+        if shutil.which("chromium-browser") is None or shutil.which("chromedriver") is None:
+            resp = requests.get(url, timeout=10, verify=False)  # verify=False fixes SSL on Render
             return [{"name": k, "value": v} for k, v in resp.cookies.get_dict().items()]
 
-        # Chromium is available → use Selenium
+        # Chromium and Chromedriver available → use Selenium
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
 
-        # Paths for Render
         chrome_path = shutil.which("chromium-browser")
         driver_path = shutil.which("chromedriver")
 
@@ -49,7 +48,6 @@ def extract_cookies_from_url(url):
             driver.quit()
 
     except Exception as e:
-        # Print full error in logs
         print("❌ extract_cookies_from_url ERROR:", e)
         print(traceback.format_exc())
         return [{
