@@ -23,22 +23,17 @@ def extract_cookies_from_url(url):
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
         )
 
-        # --- Force chromium and chromedriver path on Render ---
-        if os.getenv("RENDER") == "true":
-            chrome_options.binary_location = "/usr/bin/chromium-browser"
-            service = Service("/usr/bin/chromedriver")
+        # Try to find installed binaries
+        chrome_path = shutil.which("chromium-browser") or shutil.which("google-chrome")
+        driver_path = shutil.which("chromedriver")
+
+        if chrome_path and driver_path:
+            chrome_options.binary_location = chrome_path
+            service = Service(driver_path)
         else:
-            # Normal environment: try to find installed binaries
-            chrome_path = shutil.which("chromium-browser") or shutil.which("google-chrome")
-            driver_path = shutil.which("chromedriver")
-            if chrome_path and driver_path:
-                chrome_options.binary_location = chrome_path
-                service = Service(driver_path)
-            else:
-                # Local dev fallback
-                from webdriver_manager.chrome import ChromeDriverManager
-                service = Service(ChromeDriverManager().install())
-        # -------------------------------------------------------
+            # Fallback to webdriver_manager for local dev if binaries not found
+            from webdriver_manager.chrome import ChromeDriverManager
+            service = Service(ChromeDriverManager().install())
 
         driver = webdriver.Chrome(service=service, options=chrome_options)
 
