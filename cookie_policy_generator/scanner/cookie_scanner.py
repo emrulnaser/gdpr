@@ -1,18 +1,22 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+import shutil
 
 def extract_cookies_from_url(url):
-    options = Options()
-    options.add_argument("--headless")        # Run Chrome in headless mode (no UI)
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")  # Useful for some Linux envs
-    options.binary_location = "/usr/bin/chromium-browser"
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+    # Path to chromium in Render
+    chrome_path = shutil.which("chromium-browser")
+    driver_path = shutil.which("chromedriver")
+
+    chrome_options.binary_location = chrome_path
+    service = Service(driver_path)
+
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
         driver.get(url)
