@@ -46,7 +46,6 @@ WeasyPrint==66.0
 gunicorn
 langdetect==1.0.9
 requests
-selenium
 webdriver-manager
 beautifulsoup4==4.12.3
 lxml==5.2.2
