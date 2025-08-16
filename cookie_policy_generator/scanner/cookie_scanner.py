@@ -12,16 +12,14 @@ def extract_cookies_from_url(url):
 
     try:
         with sync_playwright() as p:
+            # Lightweight Chromium launch
             browser = p.chromium.launch(
                 headless=True,
                 args=[
                     "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-accelerated-2d-canvas",
-                    "--no-zygote",
+                    "--disable-gpu",
                     "--single-process",
-                    "--disable-gpu"
+                    "--disable-dev-shm-usage"
                 ]
             )
 
@@ -33,17 +31,19 @@ def extract_cookies_from_url(url):
             )
 
             page = context.new_page()
-            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            page.goto(url, wait_until="domcontentloaded", timeout=20000)  # 20s timeout
 
-            # Try clicking cookie consent button
+            # Click cookie consent button if present
             try:
-                page.click("button#accept-cookie, .cookie-consent-accept", timeout=5000)
-                time.sleep(3)
+                page.click("button#accept-cookie, .cookie-consent-accept", timeout=3000)
+                time.sleep(1)
             except:
-                pass  # no consent button found
+                pass
 
-            # Extract cookies
             cookies = context.cookies()
+
+            # Close context & browser immediately to free memory
+            context.close()
             browser.close()
 
             return [{
