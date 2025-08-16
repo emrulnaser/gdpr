@@ -3,7 +3,6 @@ weasyprint==66.0
 PyPDF2==3.0.1
 gunicorn==23.0.0
 langdetect==1.0.9
-playwright==1.47.0
 beautifulsoup4==4.12.3
 lxml==5.2.2
 requests==2.32.4

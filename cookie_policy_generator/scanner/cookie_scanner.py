@@ -1,38 +1,33 @@
-import requests
-from bs4 import BeautifulSoup
+import undetected_chromedriver as uc
+from selenium.common.exceptions import WebDriverException
 
 def extract_cookies_from_url(url):
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
 
     try:
-        scan_url = f"https://2gdpr.com/cookie-scanner?url={url}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36'
-        }
-        response = requests.get(scan_url, headers=headers)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.content, 'html.parser')
+        options = uc.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        driver = uc.Chrome(options=options, version_main=138)
+        driver.get(url)
         
-        cookies = []
-        table = soup.find('table', {'class': 'cookie-scan-report-table'})
-        if table:
-            rows = table.find_all('tr')
-            for row in rows[1:]: # Skip header row
-                cols = row.find_all('td')
-                if len(cols) >= 6:
-                    cookie = {
-                        'name': cols[0].text.strip(),
-                        'domain': cols[1].text.strip(),
-                        'expiry': cols[4].text.strip(),
-                        'description': cols[5].text.strip(),
-                    }
-                    cookies.append(cookie)
+        cookies = driver.get_cookies()
+        driver.quit()
         
-        return cookies
+        return [{
+            'name': cookie['name'],
+            'domain': cookie['domain'],
+            'expiry': cookie.get('expiry', 'N/A'),
+            'description': '', # Selenium does not provide cookie description
+        } for cookie in cookies]
 
-    except requests.exceptions.RequestException as e:
-        return [{'name': 'Error', 'domain': 'N/A', 'expiry': 'N/A', 'description': str(e)}]
+    except WebDriverException as e:
+        error_message = f"WebDriverException: {e.msg}"
+        print(error_message)
+        return [{'name': 'Error', 'domain': 'N/A', 'expiry': 'N/A', 'description': error_message}]
     except Exception as e:
-        return [{'name': 'Error', 'domain': 'N/A', 'expiry': 'N/A', 'description': 'An unexpected error occurred.'}]
+        error_message = str(e)
+        print(error_message)
+        return [{'name': 'Error', 'domain': 'N/A', 'expiry': 'N/A', 'description': error_message}]
