@@ -14,7 +14,6 @@ h5py==3.14.0
 idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
-keras==3.10.0
 libclang==18.1.1
 Markdown==3.8.2
 markdown-it-py==3.0.0
@@ -31,10 +30,6 @@ Pygments==2.19.2
 requests==2.32.4
 rich==14.0.0
 six==1.17.0
-tensorboard==2.19.0
-tensorboard-data-server==0.7.2
-tensorflow==2.19.0
-
 termcolor==3.1.0
 typing_extensions==4.14.1
 urllib3==2.5.0
@@ -45,7 +40,6 @@ PyPDF2==3.0.1
 WeasyPrint==66.0
 gunicorn
 langdetect==1.0.9
-requests
 webdriver-manager
 beautifulsoup4==4.12.3
 lxml==5.2.2
