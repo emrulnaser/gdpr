@@ -1,14 +1,14 @@
 from flask import Blueprint, render_template, request, jsonify
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
 from .scanner.cookie_scanner import extract_cookies_from_url
 from .generator.policy_generator import generate_policy
+
+# Playwright imports
+from playwright.sync_api import sync_playwright
+import time
+import os
+
+# Ensure Playwright uses local browser folder
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
 # Blueprint for cookie policy generator
 cookie_bp = Blueprint(
@@ -34,42 +34,43 @@ def lookup_cookie_api():
     if not cookie_name:
         return jsonify({ "error": "Cookie name is required." }), 400
 
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-    
-    driver = None
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-        url = f"https://duckduckgo.com/?q=what+is+the+{cookie_name}+cookie&ia=web"
-        driver.get(url)
-        
-        wait = WebDriverWait(driver, 5) # 5 second timeout
-        description = None
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                )
+            )
+            page = context.new_page()
+            url = f"https://duckduckgo.com/?q=what+is+the+{cookie_name}+cookie&ia=web"
+            page.goto(url, wait_until="domcontentloaded", timeout=15000)
 
-        # Strategy 1: Look for the Search Assist definition
-        try:
-            description_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".search-assist-result__description")))
-            description = description_element.text
-            if description:
-                return jsonify({ "description": description })
-        except (TimeoutException, NoSuchElementException):
-            pass # If it fails, just move to the next strategy
+            description = None
 
-        # Strategy 2: Look for the description of the first search result
-        try:
-            description_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[data-testid='result-description']")))
-            description = description_element.text
-            if description:
-                return jsonify({ "description": description })
-        except (TimeoutException, NoSuchElementException):
-            pass # If it fails, we will go to the final error
+            # Strategy 1: Search Assist definition
+            try:
+                description_element = page.wait_for_selector(".search-assist-result__description", timeout=5000)
+                description = description_element.inner_text()
+                if description:
+                    browser.close()
+                    return jsonify({ "description": description })
+            except:
+                pass
 
-        return jsonify({ "error": "All lookup strategies failed." }), 404
+            # Strategy 2: First search result description
+            try:
+                description_element = page.wait_for_selector("[data-testid='result-description']", timeout=5000)
+                description = description_element.inner_text()
+                if description:
+                    browser.close()
+                    return jsonify({ "description": description })
+            except:
+                pass
+
+            browser.close()
+            return jsonify({ "error": "All lookup strategies failed." }), 404
 
     except Exception as e:
         return jsonify({ "error": f"An unexpected error occurred: {str(e)}" }), 500
-    finally:
-        if driver:
-            driver.quit()

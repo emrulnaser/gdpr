@@ -1,59 +1,51 @@
 import os
-import shutil
 import traceback
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from playwright.sync_api import sync_playwright
+
+# Use local Playwright browsers folder
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
 def extract_cookies_from_url(url):
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
 
     try:
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
-        )
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-accelerated-2d-canvas",
+                    "--no-zygote",
+                    "--single-process",
+                    "--disable-gpu"
+                ]
+            )
 
-        # Try to find installed binaries
-        chrome_path = shutil.which("chromium-browser") or shutil.which("google-chrome")
-        driver_path = shutil.which("chromedriver")
+            context = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+                )
+            )
 
-        if chrome_path and driver_path:
-            chrome_options.binary_location = chrome_path
-            service = Service(driver_path)
-        else:
-            # Fallback to webdriver_manager for local dev if binaries not found
-            from webdriver_manager.chrome import ChromeDriverManager
-            service = Service(ChromeDriverManager().install())
-
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-
-        try:
-            driver.get(url)
-            wait = WebDriverWait(driver, 20)
+            page = context.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
             # Try clicking cookie consent button
             try:
-                consent_button = wait.until(
-                    EC.element_to_be_clickable(
-                        (By.CSS_SELECTOR, "button#accept-cookie, .cookie-consent-accept")
-                    )
-                )
-                consent_button.click()
+                page.click("button#accept-cookie, .cookie-consent-accept", timeout=5000)
                 time.sleep(3)
             except:
                 pass  # no consent button found
 
-            selenium_cookies = driver.get_cookies()
+            # Extract cookies
+            cookies = context.cookies()
+            browser.close()
+
             return [{
                 "name": c.get("name"),
                 "domain": c.get("domain"),
@@ -61,19 +53,19 @@ def extract_cookies_from_url(url):
                 "secure": c.get("secure"),
                 "httpOnly": c.get("httpOnly"),
                 "value": c.get("value")
-            } for c in selenium_cookies]
-
-        finally:
-            driver.quit()
+            } for c in cookies]
 
     except Exception as e:
-        print("❌ ERROR:", e)
-        print(traceback.format_exc())
+        safe_error = str(e).encode("utf-8", "replace").decode("utf-8")
+        safe_trace = traceback.format_exc().encode("utf-8", "replace").decode("utf-8")
+        print("❌ ERROR:", safe_error)
+        print(safe_trace)
+
         return [{
             "name": "Error",
             "domain": "N/A",
             "path": "/",
             "secure": False,
             "httpOnly": False,
-            "value": str(e)
+            "value": safe_error
         }]
