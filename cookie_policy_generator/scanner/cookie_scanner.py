@@ -1,5 +1,6 @@
 import undetected_chromedriver as uc
 from selenium.common.exceptions import WebDriverException
+import os
 
 def extract_cookies_from_url(url):
     if not url.startswith(("http://", "https://")):
@@ -10,6 +11,12 @@ def extract_cookies_from_url(url):
         options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
+        
+        # Set the binary location for Render
+        chrome_binary_path = "/usr/bin/chromium-browser"
+        if os.path.exists(chrome_binary_path):
+            options.binary_location = chrome_binary_path
+            
         driver = uc.Chrome(options=options, version_main=138)
         driver.get(url)
         
