@@ -24,7 +24,8 @@ def cookie_policy_tool():
 @cookie_bp.route("/generate-policy", methods=["POST"])
 def generate():
     url = request.form["url"]
-    cookies = extract_cookies_from_url(url)
+    # cookies = extract_cookies_from_url(url)
+    cookies = [{'name': 'dummy_cookie', 'domain': 'example.com', 'expiry': 'session', 'description': 'This is a dummy cookie.'}]
     policy = generate_policy(cookies)
     return render_template("cookie_policy_result.html", policy=policy, site=url)
 
