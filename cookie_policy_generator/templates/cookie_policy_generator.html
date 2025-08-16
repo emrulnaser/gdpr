@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🍪 Cookie Policy Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #d2691e;
+    }
+    form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input[type="url"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 0.7rem;
+      font-size: 1.1rem;
+      background-color: #d2691e;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #b05210;
+    }
+    p.description {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍪 Cookie Policy Generator</h1>
+  <p class="description">Enter a URL to automatically detect cookies and generate a GDPR-compliant policy.</p>
+
+  <form action="{{ url_for('cookie_bp.generate') }}" method="POST">
+    <input type="url" name="url" placeholder="https://example.com" required />
+    <button type="submit">Scan &amp; Generate Policy</button>
+  </form>
+</body>
+</html>

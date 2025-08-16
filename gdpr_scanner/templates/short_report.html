@@ -1,0 +1,375 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GDPR Compliance Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3em;
+            color: #000;
+            opacity: 0.15;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 9999;
+            font-weight: bold;
+        }
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .upload-section {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px dashed #dce7ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            resize: vertical;
+            min-height: 150px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        button i {
+            margin-right: 10px;
+        }
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-header h2 {
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .score-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .compliance-list {
+            list-style: none;
+        }
+
+        .compliance-item {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f9fafc;
+            margin-bottom: 15px;
+            border-left: 4px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .compliance-item.compliant {
+            border-left-color: #4ade80;
+        }
+
+        .compliance-item.non-compliant {
+            border-left-color: #f87171;
+        }
+
+        .compliance-item .status {
+            font-weight: 600;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .compliance-item.compliant .status {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .compliance-item.non-compliant .status {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ef4444;
+        }
+        .error ul li {
+            color: black; /* Set article text to black */
+        }
+
+        .status-ok {
+            color: green !important;
+            font-weight: bold;
+        }
+        .status-warning {
+            color: orange !important;
+            font-weight: bold;
+        }
+        .status-risk {
+            color: red !important;
+            font-weight: bold;
+        }
+
+        .preview-section {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .preview-section h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .preview-content {
+            white-space: pre-wrap;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">eSecurity for Safe Privacy & Transparency</div>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> {{ t.full_report_title }}</h1>
+            <p>Upload your privacy policy document or paste text to check GDPR compliance requirements</p>
+        </header>
+
+        <section class="upload-section">
+            <form method="POST" action="{{ url_for('gdpr.scan') }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="text">Or paste policy text here:</label>
+                    <textarea name="text" placeholder="Paste your policy text here..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="file_input">Choose a file (TXT, PDF, CSV)</label>
+                    <input id="file_input" type="file" name="file" accept=".txt,.pdf,.csv" />
+                </div>
+
+                {% if error %}
+                <div class="error">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="language">Select Language:</label>
+                    <select name="selected_language" id="language" onchange="updateHiddenLanguage()">
+                      <option value="en">English</option>
+                      <option value="nl">Dutch</option>
+                    </select>
+                </div>
+                <input type="hidden" name="selected_language" id="selected_language_hidden" value="en">
+
+                <button type="submit"><i class="fas fa-search"></i> {{ t.scan_for_compliance }}</button>
+            </form>
+        </section>
+
+        <script>
+            function updateHiddenLanguage() {
+              var languageSelect = document.getElementById('language');
+              var selectedLanguageInput = document.getElementById('selected_language_hidden');
+              selectedLanguageInput.value = languageSelect.value;
+            }
+            // Set initial value on page load
+            window.onload = updateHiddenLanguage;
+          </script>
+
+        {% if results %}
+        <section class="results-section">
+            <div class="results-header">
+                <h2><i class="fas fa-clipboard-list"></i> {{ t.compliance_results }}</h2>
+            </div>
+
+            <div class="score-card">
+                <h3>{{ t.total_compliance_percentage }}</h3>
+                <div class="score-value">{{ total_score }}%</div>
+                <p>{{ summary_text }}</p>
+            </div>
+
+            {% if key_issues %}
+            <div class="error">
+                <h3>{{ t.key_articles_status }}</h3>
+                <ul>
+                    {% for issue in key_issues %}
+                    <li>{{ issue | safe }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="compliance-list">
+                {% for article_id, data in results.items() %}
+                    {% if 'status' in data %} {# Ensure it's an article, not the overall summary #}
+                    <div class="compliance-item {% if '✅' in data.status %}compliant{% else %}non-compliant{% endif %}">
+                        <h3>{{ article_id }} - {{ data.title }}</h3>
+                        <p><strong>{{ t.status }}:</strong> {{ data.status }}</p>
+                        <p><strong>{{ t.matched_keywords }}:</strong> {{ data.found_terms | join(', ') }}</p>
+                        <p><strong>{{ t.match_percentage }}:</strong> {{ data.match_percentage }}</p>
+                        <p><strong>{{ t.summary }}:</strong> {{ data.summary }}</p>
+                        <p><strong>{{ t.related_recitals }}:</strong></p>
+                        <ul>
+                            {% for recital in data.recitals %}
+                            <li>{{ recital }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if scanned_text %}
+            <div class="preview-section">
+                <h3><i class="fas fa-file-alt"></i> {{ t.scanned_content_preview }}</h3>
+                <div class="preview-content">{{ scanned_text }}</div>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <footer>
+            <p>{{ t.visit_us }} <a href="https://esecurity.ovh">esecurity.ovh</a></p>
+            <p>{{ t.email }} <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
+            <p>{{ t.footer_text }}</p>
+        </footer>
+    </div>
+</body>
+</html>

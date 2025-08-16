@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GDPR Full Report Input</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Copy relevant styles from full_report.html's header-banner and related elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header-banner {
+            background: linear-gradient(90deg, #4b6cb7, #182848);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .header-banner h1 {
+            margin: 0 0 8px 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+        }
+        .header-banner p {
+            margin: 4px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .header-banner .file-input-label {
+            display: inline-block;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .header-banner input[type="file"] {
+            margin-left: 10px;
+        }
+        .header-banner button.scan-btn {
+            background-color: #e0e6f2;
+            color: #182848;
+            font-weight: 600;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+        .header-banner button.scan-btn:hover {
+            background-color: #bbc7e6;
+        }
+        .header-banner .footer-text {
+            margin-top: 25px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #d1d6e0;
+        }
+    </style>
+</head>
+<body>
+<div class="header-banner">
+  <h1>GDPR Compliance Scanner</h1>
+  <p>Upload your privacy policy document or paste text to check GDPR compliance requirements</p>
+  <p>Or paste policy text here:</p>
+
+  <!-- Form targets /full_report to trigger full report route -->
+  <form method="POST" action="{{ url_for('gdpr.full_report') }}" enctype="multipart/form-data">
+
+    <!-- Textarea preserves previous input with scanned_text -->
+    <textarea name="text_input" placeholder="Paste your policy text here..." 
+      style="width: 60%; padding: 10px; font-size: 1rem; border-radius: 6px; border: none; margin-bottom: 12px;" rows="5">{{ scanned_text|default('') }}</textarea>
+
+    <br>
+
+    <label class="file-input-label" for="file_input">Choose a file (TXT, PDF, CSV)</label>
+    <input id="file_input" type="file" name="file_input" accept=".txt,.pdf,.csv" />
+
+    <br>
+
+    <label for="language">Select Language:</label>
+    <select name="language" id="language" onchange="updateHiddenLanguage()">
+      <option value="en">English</option>
+      <option value="nl">Dutch</option>
+    </select>
+    
+    <input type="hidden" name="selected_language" id="selected_language" value="en">
+
+    <br>
+
+    <button type="submit" class="scan-btn">Scan for Compliance</button>
+  </form>
+
+  <script>
+    function updateHiddenLanguage() {
+      var languageSelect = document.getElementById('language');
+      var selectedLanguageInput = document.getElementById('selected_language');
+      selectedLanguageInput.value = languageSelect.value;
+    }
+    // Set initial value on page load
+    window.onload = updateHiddenLanguage;
+  </script>
+
+  <div class="footer-text">
+    GDPR Compliance Scanner © 2025 | Protecting Privacy Rights
+  </div>
+</div>
+</body>
+</html>

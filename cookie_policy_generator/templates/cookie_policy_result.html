@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>🍪 Cookie Policy Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #aaa;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    .lookup-btn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .lookup-results {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🍪 Cookie Policy for <span style="color: #2a7;">{{ site }}</span></h2>
+
+    {% if policy and policy[0].name == "Error" %}
+        <p class="error">❌ Error: {{ policy[0].value }}</p>
+    {% elif policy %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Cookie Name</th>
+                    <th>Domain</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Duration</th>
+                    <th>Type</th>
+                    <th>Function</th>
+                    <th>Ownership</th>
+                    <th>Risk Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cookie in policy %}
+                <tr>
+                    <td>
+                        {{ cookie.name }}
+                        <button class="lookup-btn" data-cookie-name="{{ cookie.name }}">Look Up</button>
+                        <div class="lookup-results" id="results-{{ cookie.name }}" style="display: none;"></div>
+                    </td>
+                    <td>{{ cookie.domain }}</td>
+                    <td>{{ cookie.category }}</td>
+                    <td>{{ cookie.description }}</td>
+                    <td>{{ cookie.duration }}</td>
+                    <td>{{ cookie.type if cookie.type else 'N/A' }}</td>
+                    <td>{{ cookie.function if cookie.function else 'N/A' }}</td>
+                    <td>{{ cookie.ownership if cookie.ownership else 'N/A' }}</td>
+                    <td>{{ cookie.risk_category if cookie.risk_category else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No cookies were found on the provided site.</p>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lookupButtons = document.querySelectorAll('.lookup-btn');
+            lookupButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const cookieName = this.dataset.cookieName;
+                    const resultsDiv = document.getElementById(`results-${cookieName}`);
+
+                    // Show loading text
+                    resultsDiv.style.display = 'block';
+                    resultsDiv.innerHTML = 'Searching...';
+
+                    fetch('/cookie_policy_generator/lookup-cookie-api', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ cookie_name: cookieName })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsDiv.style.display = 'block'; // Ensure the div is visible
+                        if (data.error) {
+                            resultsDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                        } else {
+                            resultsDiv.innerHTML = `<p>${data.description}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        resultsDiv.style.display = 'block'; // Ensure the div is visible
+                        resultsDiv.innerHTML = `<p class="error">An unexpected error occurred: ${error}</p>`;
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

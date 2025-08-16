@@ -1,0 +1,122 @@
+<!-- consent_mode_v2/templates/consent_report.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consent Mode v2 Report</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9fafb;
+            color: #333;
+            margin: 20px auto;
+            max-width: 720px;
+            padding: 0 15px;
+        }
+        h2 {
+            color: #1a73e8;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        a.back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease-in-out;
+        }
+        a.back-link:hover {
+            color: #155ab6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .status-compliant {
+            color: green;
+            font-weight: 700;
+        }
+        .status-noncompliant {
+            color: #d93025;
+            font-weight: 700;
+        }
+        .notes {
+            font-style: italic;
+            margin-top: 10px;
+            color: #555;
+        }
+        .error-message {
+            color: #d93025;
+            font-weight: 700;
+            margin: 30px 0;
+            background: #fdecea;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(217,48,37,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Consent Mode v2 Report for {{ website_url }}</h2>
+
+    <a href="{{ url_for('consent.consent_checker') }}" class="back-link">← Back to Consent Checker</a>
+
+    {% if report.status == 'error' %}
+        <div class="error-message">Error: {{ report.message }}</div>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Signal</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for signal, status in report.signals.items() %}
+                <tr>
+                    <td>{{ signal }}</td>
+                    <td class="{% if status == 'granted' %}status-compliant{% elif status == 'denied' %}status-noncompliant{% else %}status-noncompliant{% endif %}">
+                        {{ status }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p>
+            <strong>Compliance:</strong>
+            {% if report.compliance %}
+                <span class="status-compliant">✅ Compliant</span>
+            {% else %}
+                <span class="status-noncompliant">❌ Not Compliant</span>
+            {% endif %}
+        </p>
+
+        <p class="notes">{{ report.notes }}</p>
+    {% endif %}
+
+</body>
+</html>

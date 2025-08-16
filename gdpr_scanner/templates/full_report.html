@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Full GDPR Compliance Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 3em;
+            color: #000;
+            opacity: 0.15;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 9999;
+            font-weight: bold;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 20px;
+            color: #374151;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h1, h2, h3 {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: #1d4ed8;
+        }
+
+        .summary-box {
+            background-color: #eff6ff;
+            padding: 25px;
+            border-left: 5px solid #3b82f6;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .summary-box p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .status-ok {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .status-warning {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .status-risk {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .article-summary-visual {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-block {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .compliant-block {
+            flex: 5; /* 50% width */
+            background-color: #dcfce7;
+            border-left: 5px solid #22c55e;
+        }
+
+        .partial-block {
+            flex: 3; /* 30% width */
+            background-color: #fef3c7;
+            border-left: 5px solid #f59e0b;
+        }
+
+        .total-score-block {
+            flex: 2; /* 20% width */
+            background-color: #dbeafe;
+            border-left: 5px solid #3b82f6;
+        }
+
+        .summary-block h3 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+
+        .article-badge {
+            display: inline-block;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .compliant-badge { background-color: #22c55e; }
+        .partial-badge { background-color: #f59e0b; }
+        .non-compliant-badge { background-color: #ef4444; }
+
+        .download-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+        }
+
+        .download-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .header-banner {
+            background: linear-gradient(90deg, #4b6cb7, #182848);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 10px;
+                max-width: 100%;
+            }
+
+            .download-btn, .header-banner {
+                display: none;
+            }
+
+            h1, h2 {
+                page-break-after: avoid;
+            }
+
+            table {
+                page-break-inside: auto;
+                border: 1px solid #d1d5db; /* Ensure table border in PDF */
+            }
+
+            th, td {
+                border: 1px solid #d1d5db; /* Ensure cell borders in PDF */
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            th:nth-child(1), td:nth-child(1) { width: 10%; } /* GDPR Article */
+            th:nth-child(2), td:nth-child(2) { width: 15%; } /* Title */
+            th:nth-child(3), td:nth-child(3) { width: 10%; } /* Status */
+            th:nth-child(4), td:nth-child(4) { width: 10%; } /* Match % */
+            th:nth-child(5), td:nth-child(5) { width: 45%; } /* Matched Keywords */
+            th:nth-child(6), td:nth-child(6) { width: 10%; } /* Recitals */
+
+            .scanned-text-display {
+                page-break-before: always; /* Start on a new page in PDF */
+            }
+        }
+
+        .scanned-text-display {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            border: 1px solid #dbeafe;
+        }
+
+        .scanned-text-display h2 {
+            color: #1d4ed8;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .scanned-text-display pre {
+            white-space: pre-wrap; /* Preserve whitespace and wrap text */
+            word-wrap: break-word;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #374151;
+            background-color: #e0e7eb;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            max-height: 400px; /* Limit height for web view */
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="watermark">eSecurity for Safe Privacy & Transparency</div>
+<div class="container">
+    <h1>🛡 {{ t.full_report_title }}</h1>
+
+    <div class="summary-box">
+        <h2>📌 {{ t.compliance_summary }}</h2>
+        <p><strong>{{ t.key_issue_risk }}</strong></p>        <ul>            {% for issue in key_issues.split('\n') %}                <li class="{% if '✅' in issue %}status-ok{% elif '⚠' in issue %}status-warning{% elif '❌' in issue %}status-risk{% endif %}">{{ issue }}</li>            {% endfor %}        </ul>
+        <p><strong>{{ t.overall_compliance_score }}</strong> <span class="score">{{ score }}%</span></p>
+        
+        <p><strong>{{ t.risk_level }}</strong> {{ risk_level }}</p>
+        <p><strong>{{ t.summary_notes }}</strong> {{ summary }}</p>
+    </div>
+
+    <h2>📄 {{ t.article_analysis }}</h2>
+
+    <div class="article-summary-visual">
+        {% if compliant_articles %}
+        <div class="summary-block compliant-block">
+            <h3>✅ {{ t.strongly_aligned }}</h3>
+            <p>{% for article in compliant_articles %}
+                <span class="article-badge compliant-badge">{{ article }}</span>
+            {% endfor %}</p>
+        </div>
+        {% endif %}
+
+        {% if partial_articles %}
+        <div class="summary-block partial-block">
+            <h3>⚠ {{ t.partially_aligned }}</h3>
+            <p>{% for article in partial_articles %}
+                <span class="article-badge partial-badge">{{ article }}</span>
+            {% endfor %}</p>
+        </div>
+        {% endif %}
+        <div class="summary-block total-score-block">
+            <h3>📊 {{ t.total_alignment_score }}</h3>
+            <p><span class="score">{{ total_compliance_score }}%</span></p>
+        </div>
+    </div>
+
+    {% if results %}
+    <table>
+        <thead>
+            <tr>
+                <th>{{ t.gdpr_article }}</th>
+                <th>{{ t.title }}</th>
+                <th>{{ t.status }}</th>
+                <th>{{ t.match_percent }}</th>
+                <th>{{ t.matched_keywords }}</th>
+                <th>{{ t.recitals }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article, details in results.items() %}
+            {% if 'status' in details %}
+            <tr>
+                <td>{{ article }}</td>
+                <td>{{ details.title }}</td>
+                <td class="
+                    {% if details.status.startswith('✅') %}status-ok{% elif details.status.startswith('⚠') %}status-warning{% else %}status-risk{% endif %}
+                ">
+                    {{ details.status }}
+                </td>
+                <td>{{ details.match_percentage }}%</td>
+                <td>{{ details.found_terms | join(', ') }}</td>
+                <td>{{ details.recitals | join(', ') }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No results to display. Please upload a file or enter text to generate the report.</p>
+    {% endif %}
+
+    <form action="{{ url_for('gdpr.download_pdf') }}" method="post" style="display:inline;">
+        <input type="hidden" name="scanned_text" value="{{ scanned_text|default('') }}">
+        <input type="hidden" name="language" value="{{ t.language }}">
+        <button type="submit" class="download-btn">⬇ {{ t.download_report }}</button>
+    </form>
+
+    {% if scanned_text %}
+    <div class="scanned-text-display">
+        <h2>{{ t.scanned_content }}</h2>
+        <pre>{{ scanned_text }}</pre>
+    </div>
+    {% endif %}
+    <div class="footer" style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #777; font-size: 0.9em;">
+        <p>{{ t.visit_us }} <a href="https://esecurity.ovh">esecurity.ovh</a></p>
+        <p>{{ t.email }} <a href="mailto:emrulnaser@gmail.com">emrulnaser@gmail.com</a></p>
+        <p>{{ t.footer_text }}</p>
+    </div>
+</div>
+</body>
+</html>

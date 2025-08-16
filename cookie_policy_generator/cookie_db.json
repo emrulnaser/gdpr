@@ -1,0 +1,198 @@
+{
+  "csrftoken": {
+    "category": "Essential",
+    "type": "First-party",
+    "function": "Protects against Cross-Site Request Forgery (CSRF) attacks.",
+    "ownership": "Own site",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": true,
+    "risk_category": "Low",
+    "description": "This cookie is used to protect against Cross-Site Request Forgery attacks."
+  },
+  "sessionid": {
+    "category": "Essential",
+    "type": "First-party",
+    "function": "Preserves user session state across page requests.",
+    "ownership": "Own site",
+    "duration": "Session",
+    "secure": true,
+    "httpOnly": true,
+    "risk_category": "Low",
+    "description": "Preserves user session state across page requests."
+  },
+  "PHPSESSID": {
+    "category": "Essential",
+    "type": "First-party",
+    "function": "Maintains user session on PHP-based websites.",
+    "ownership": "Own site",
+    "duration": "Session",
+    "secure": false,
+    "httpOnly": true,
+    "risk_category": "Low",
+    "description": "Used to establish and maintain a user session across page requests on PHP sites."
+  },
+  "_ga": {
+    "category": "Analytics",
+    "type": "Third-party",
+    "function": "Registers a unique ID to generate statistical data on how the visitor uses the website.",
+    "ownership": "Google",
+    "duration": "2 years",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Medium",
+    "description": "Registers a unique ID that is used to generate statistical data on how the visitor uses the website."
+  },
+  "_gid": {
+    "category": "Analytics",
+    "type": "Third-party",
+    "function": "Registers a unique ID to generate statistical data on how the visitor uses the website.",
+    "ownership": "Google",
+    "duration": "24 hours",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Medium",
+    "description": "Registers a unique ID that is used to generate statistical data on how the visitor uses the website."
+  },
+  "_gat": {
+    "category": "Performance",
+    "type": "Third-party",
+    "function": "Used by Google Analytics to throttle request rate.",
+    "ownership": "Google",
+    "duration": "1 minute",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Low",
+    "description": "Used by Google Analytics to throttle request rate."
+  },
+  "IDE": {
+    "category": "Marketing",
+    "type": "Third-party",
+    "function": "Registers and reports the user's actions after viewing or clicking one of the advertiser's ads.",
+    "ownership": "Google DoubleClick",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "High",
+    "description": "Used by Google DoubleClick to register and report the website user's actions after viewing or clicking one of the advertiser's ads."
+  },
+  "NID": {
+    "category": "Marketing",
+    "type": "Third-party",
+    "function": "Remembers your preferences and other information, such as preferred language.",
+    "ownership": "Google",
+    "duration": "6 months",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "High",
+    "description": "Contains a unique ID that Google uses to remember your preferences and other information, such as preferred language."
+  },
+  "cookieconsent_status": {
+    "category": "Essential",
+    "type": "First-party",
+    "function": "Stores the user's cookie consent state for the current domain.",
+    "ownership": "Own site",
+    "duration": "1 year",
+    "secure": false,
+    "httpOnly": false,
+    "risk_category": "Low",
+    "description": "Stores the user's cookie consent state for the current domain."
+  },
+  "_fbp": {
+    "category": "Marketing",
+    "type": "Third-party",
+    "function": "Used by Facebook to deliver a series of advertisement products such as real-time bidding from third party advertisers.",
+    "ownership": "Facebook",
+    "duration": "3 months",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "High",
+    "description": "Used by Facebook to deliver a series of advertisement products such as real-time bidding from third party advertisers."
+  },
+  "AEC": {
+    "category": "Essential",
+    "type": "First-party",
+    "function": "Used internally by Google to manage network and session state.",
+    "ownership": "Google",
+    "duration": "Session",
+    "risk_category": "Low",
+    "description": "This cookie is used by Google to manage sessions and network state for optimal user experience."
+  },
+  "__cfduid": {
+    "category": "Essential",
+    "type": "Third-party",
+    "function": "Used by Cloudflare to identify individual clients behind a shared IP address and apply security settings on a per-client basis.",
+    "ownership": "Cloudflare",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": true,
+    "risk_category": "Low",
+    "description": "This cookie is used by Cloudflare to identify individual clients behind a shared IP address and apply security settings on a per-client basis. It does not correspond to any user ID in the web application and does not store any personally identifiable information."
+  },
+  "__stripe_mid": {
+    "category": "Essential",
+    "type": "Third-party",
+    "function": "Used by Stripe to prevent fraud.",
+    "ownership": "Stripe",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": true,
+    "risk_category": "Medium",
+    "description": "This cookie is set by Stripe to prevent fraud and abuse of their services."
+  },
+  "__stripe_sid": {
+    "category": "Essential",
+    "type": "Third-party",
+    "function": "Used by Stripe to prevent fraud.",
+    "ownership": "Stripe",
+    "duration": "30 minutes",
+    "secure": true,
+    "httpOnly": true,
+    "risk_category": "Medium",
+    "description": "This cookie is set by Stripe to prevent fraud and abuse of their services."
+  },
+  "_ym_uid": {
+    "category": "Analytics",
+    "type": "Third-party",
+    "function": "Used by Yandex Metrica to identify users.",
+    "ownership": "Yandex",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Medium",
+    "description": "This cookie is used by Yandex Metrica to identify users and gather information about their activity on the website."
+  },
+  "_ym_d": {
+    "category": "Analytics",
+    "type": "Third-party",
+    "function": "Used by Yandex Metrica to determine the date of the user's first session.",
+    "ownership": "Yandex",
+    "duration": "1 year",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Medium",
+    "description": "This cookie is used by Yandex Metrica to determine the date of the user's first session on the website."
+  },
+  "_ym_isad": {
+    "category": "Analytics",
+    "type": "Third-party",
+    "function": "Used by Yandex Metrica to determine if the user has an ad blocker.",
+    "ownership": "Yandex",
+    "duration": "2 days",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Low",
+    "description": "This cookie is used by Yandex Metrica to determine if the user has an ad blocker installed."
+  },
+  "test_cookie": {
+    "category": "Marketing",
+    "type": "Third-party",
+    "function": "Used by DoubleClick to check if the user's browser supports cookies.",
+    "ownership": "Google DoubleClick",
+    "duration": "15 minutes",
+    "secure": true,
+    "httpOnly": false,
+    "risk_category": "Low",
+    "description": "This cookie is set by DoubleClick (Google) to determine if the user's browser supports cookies."
+  }
+}
